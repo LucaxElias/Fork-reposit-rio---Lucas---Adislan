@@ -109,7 +109,7 @@ pip install -r requirements.txt
 Execute:
 
 ```cmd
-streamlit run app\main.py
+streamlit run main.py
 ```
 
 O Streamlit iniciará a aplicação. Normalmente, ela ficará disponível em:
