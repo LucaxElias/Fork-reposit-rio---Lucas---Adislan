@@ -1,8 +1,10 @@
 import streamlit as st
 
-from app.services.salas import buscar_sala_por_id, listar_salas
+from app.services.salas import buscar_sala_por_id, listar_salas, nome_tipo_sala
+from app.services.equipamentos import obter_equipamentos_da_sala
 from app.services.reservas import listar_reservas_por_sala
 from app.utils.session import exigir_usuario_selecionado
+from app.utils.helpers import badge_status, tag_neutra, barra_status
 
 st.set_page_config(
     page_title="Detalhes da Sala - UNISAPIENS",
@@ -51,10 +53,17 @@ st.session_state["sala_selecionada_id"] = sala_id
 
 st.divider()
 
+st.markdown(barra_status(sala["status"]), unsafe_allow_html=True)
+
 col1, col2 = st.columns([2, 1])
 
 with col1:
     st.subheader(sala["nome"])
+
+    st.markdown(
+        tag_neutra(nome_tipo_sala(sala["idTipoSala"])),
+        unsafe_allow_html=True,
+    )
 
     st.write(
         f"📍 **Localização:** "
@@ -67,6 +76,15 @@ with col1:
         f"{sala['capacidade']} pessoas"
     )
 
+    equipamentos = obter_equipamentos_da_sala(sala["idSala"])
+    if not equipamentos.empty:
+        st.write("🧰 **Equipamentos:**")
+        tags_html = "".join(
+            tag_neutra(f"{linha['nome']} ({int(linha['quantidade'])})")
+            for _, linha in equipamentos.iterrows()
+        )
+        st.markdown(tags_html, unsafe_allow_html=True)
+
     if sala.get("descricao"):
         st.write(
             f"📝 **Descrição:** "
@@ -74,18 +92,10 @@ with col1:
         )
 
 with col2:
-    cor = {
-        "Disponivel": "🟢",
-        "Manutencao": "🟠",
-        "Indisponivel": "🔴"
-    }.get(
-        sala["status"],
-        "⚪"
-    )
-
-    st.metric(
-        "Status atual",
-        f"{cor} {sala['status']}"
+    st.caption("Status atual")
+    st.markdown(
+        badge_status(sala["status"]),
+        unsafe_allow_html=True,
     )
 
     if sala["status"] == "Disponivel":

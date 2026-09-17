@@ -21,9 +21,15 @@ reservar = st.Page(
 minhas_reservas = st.Page(
     "pages/5_Minhas_Reservas.py", title="Minhas Reservas", icon="🗂️"
 )
+perfil = st.Page(
+    "pages/6_Perfil.py", title="Perfil", icon="👤"
+)
+disponibilidade = st.Page(
+    "pages/7_Disponibilidade.py", title="Disponibilidade", icon="📆"
+)
 
 pagina_atual = st.navigation(
-    [home, salas, detalhes_sala, reservar, minhas_reservas]
+    [home, salas, detalhes_sala, reservar, disponibilidade, minhas_reservas, perfil]
 )
 
 pagina_atual.run()

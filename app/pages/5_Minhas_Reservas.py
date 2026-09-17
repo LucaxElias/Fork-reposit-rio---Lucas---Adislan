@@ -10,6 +10,7 @@ from app.services.validacao import (
     STATUS_RESERVA_CONFIRMADA
 )
 from app.utils.session import exigir_usuario_selecionado
+from app.utils.helpers import badge_status
 
 
 st.set_page_config(
@@ -72,15 +73,10 @@ for _, reserva in df_reservas.iterrows():
             )
 
         with col_status:
-            cor = (
-                "🟢"
-                if reserva["status"] == STATUS_RESERVA_CONFIRMADA
-                else "🔴"
-            )
-
-            st.metric(
-                "Status",
-                f"{cor} {reserva['status']}"
+            st.caption("Status")
+            st.markdown(
+                badge_status(reserva["status"]),
+                unsafe_allow_html=True,
             )
 
         with col_acao:

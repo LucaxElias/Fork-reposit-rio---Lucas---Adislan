@@ -19,7 +19,16 @@ from app.services.validacao import (
 )
 
 CAMINHO_SALAS_CSV = os.path.join("data", "salas.csv")
+CAMINHO_TIPOS_SALA_CSV = os.path.join("data", "tipos_sala.csv")
 SEPARADOR = ";"
+
+LABELS_TIPO_SALA = {
+    "REUNIAO": "Reunião",
+    "AUDITORIO": "Auditório",
+    "TREINAMENTO": "Treinamento",
+    "COWORKING": "Coworking",
+    "LABORATORIO": "Laboratório",
+}
 
 STATUS_VALIDOS = {
     STATUS_SALA_DISPONIVEL,
@@ -42,6 +51,26 @@ def _carregar_salas() -> pd.DataFrame:
 
 def _salvar_salas(df: pd.DataFrame) -> None:
     df.to_csv(CAMINHO_SALAS_CSV, sep=SEPARADOR, index=False)
+
+
+def _carregar_tipos_sala() -> pd.DataFrame:
+    if not os.path.exists(CAMINHO_TIPOS_SALA_CSV):
+        return pd.DataFrame(columns=["idTipoSala", "nomeTipo"])
+    return pd.read_csv(
+        CAMINHO_TIPOS_SALA_CSV, sep=SEPARADOR, dtype={"idTipoSala": str}
+    )
+
+
+def nome_tipo_sala(id_tipo_sala) -> str:
+    """Retorna o nome legível do tipo de sala (ex.: LABORATORIO -> Laboratório)."""
+    df = _carregar_tipos_sala()
+    linha = df[df["idTipoSala"] == str(id_tipo_sala)]
+
+    if linha.empty:
+        return "—"
+
+    nome_bruto = linha.iloc[0]["nomeTipo"]
+    return LABELS_TIPO_SALA.get(nome_bruto, nome_bruto)
 
 
 def listar_salas(apenas_disponiveis: bool = False) -> pd.DataFrame:

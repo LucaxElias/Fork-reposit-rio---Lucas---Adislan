@@ -1,7 +1,9 @@
 import streamlit as st
 
-from app.services.salas import listar_salas
+from app.services.salas import listar_salas, nome_tipo_sala
+from app.services.equipamentos import obter_equipamentos_da_sala
 from app.utils.session import exigir_usuario_selecionado
+from app.utils.helpers import badge_status, tag_neutra, barra_status
 
 st.set_page_config(
     page_title="Salas - UNISAPIENS",
@@ -71,6 +73,7 @@ else:
 
     for _, sala in df.iterrows():
         with st.container(border=True):
+            st.markdown(barra_status(sala["status"]), unsafe_allow_html=True)
 
             col_info, col_status, col_acao = st.columns(
                 [3, 1, 1]
@@ -79,6 +82,11 @@ else:
             with col_info:
                 st.markdown(
                     f"### {sala['nome']}"
+                )
+
+                st.markdown(
+                    tag_neutra(nome_tipo_sala(sala["idTipoSala"])),
+                    unsafe_allow_html=True,
                 )
 
                 st.write(
@@ -91,24 +99,24 @@ else:
                     f"{sala['capacidade']} pessoas"
                 )
 
+                equipamentos = obter_equipamentos_da_sala(sala["idSala"])
+                if not equipamentos.empty:
+                    tags_html = "".join(
+                        tag_neutra(f"{linha['nome']} ({int(linha['quantidade'])})")
+                        for _, linha in equipamentos.iterrows()
+                    )
+                    st.markdown(tags_html, unsafe_allow_html=True)
+
                 if sala.get("descricao"):
                     st.caption(
                         sala["descricao"]
                     )
 
             with col_status:
-                cor = {
-                    "Disponivel": "🟢",
-                    "Manutencao": "🟠",
-                    "Indisponivel": "🔴",
-                }.get(
-                    sala["status"],
-                    "⚪"
-                )
-
-                st.metric(
-                    "Status",
-                    f"{cor} {sala['status']}"
+                st.caption("Status")
+                st.markdown(
+                    badge_status(sala["status"]),
+                    unsafe_allow_html=True,
                 )
 
             with col_acao:

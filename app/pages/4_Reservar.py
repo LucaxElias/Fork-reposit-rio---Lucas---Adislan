@@ -28,6 +28,11 @@ if df_salas.empty:
     st.stop()
 
 sala_id_padrao = st.session_state.get("sala_reservar_id")
+data_prefill = st.session_state.pop("reservar_data_prefill", None)
+if data_prefill and data_prefill < date.today():
+    data_prefill = None
+hora_inicio_prefill = st.session_state.pop("reservar_hora_inicio_prefill", None)
+hora_fim_prefill = st.session_state.pop("reservar_hora_fim_prefill", None)
 
 opcoes_ids = df_salas["idSala"].tolist()
 
@@ -65,6 +70,7 @@ st.divider()
 data_reserva_preview = st.date_input(
     "Data da reserva",
     min_value=date.today(),
+    value=data_prefill if data_prefill else date.today(),
     key="data_preview"
 )
 
@@ -86,6 +92,11 @@ else:
         "⏰ De segunda a sexta, reservas são permitidas "
         "entre 19:00 e 21:45."
     )
+
+if hora_inicio_prefill:
+    hora_inicio_padrao = hora_inicio_prefill
+if hora_fim_prefill:
+    hora_fim_padrao = hora_fim_prefill
 
 with st.form("form_reserva"):
 
