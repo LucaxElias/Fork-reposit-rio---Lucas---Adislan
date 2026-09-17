@@ -57,58 +57,49 @@ for _, reserva in df_reservas.iterrows():
 
     with st.container(border=True):
 
-        col_info, col_status, col_acao = st.columns(
-            [3, 1, 1]
-        )
+        col_titulo, col_badge = st.columns([3, 1])
 
-        with col_info:
-            st.markdown(
-                f"### {nome_sala}"
-            )
+        with col_titulo:
+            st.markdown(f"### {nome_sala}")
 
-            st.write(
-                f"📅 {reserva['data']}  •  "
-                f"🕐 {reserva['horaInicio']} - "
-                f"{reserva['horaFim']}"
-            )
-
-        with col_status:
-            st.caption("Status")
+        with col_badge:
             st.markdown(
                 badge_status(reserva["status"]),
                 unsafe_allow_html=True,
             )
 
-        with col_acao:
-            st.write("")
-            st.write("")
+        st.write(
+            f"📅 {reserva['data']}  •  "
+            f"🕐 {reserva['horaInicio']} - "
+            f"{reserva['horaFim']}"
+        )
 
-            if reserva["status"] == STATUS_RESERVA_CONFIRMADA:
+        if reserva["status"] == STATUS_RESERVA_CONFIRMADA:
 
-                if st.button(
-                    "Cancelar",
-                    key=f"cancelar_{reserva['idReserva']}"
-                ):
-                    try:
-                        cancelar_reserva(
-                            reserva["idReserva"],
-                            usuario_atual["idUser"]
-                        )
+            if st.button(
+                "Cancelar",
+                key=f"cancelar_{reserva['idReserva']}"
+            ):
+                try:
+                    cancelar_reserva(
+                        reserva["idReserva"],
+                        usuario_atual["idUser"]
+                    )
 
-                        st.success(
-                            "Reserva cancelada com sucesso."
-                        )
+                    st.success(
+                        "Reserva cancelada com sucesso."
+                    )
 
-                        st.rerun()
+                    st.rerun()
 
-                    except RegraNegocioError as erro:
-                        st.error(
-                            f"Não foi possível cancelar: {erro}"
-                        )
+                except RegraNegocioError as erro:
+                    st.error(
+                        f"Não foi possível cancelar: {erro}"
+                    )
 
-            else:
-                st.button(
-                    "Cancelar",
-                    disabled=True,
-                    key=f"cancelar_disabled_{reserva['idReserva']}"
-                )
+        else:
+            st.button(
+                "Cancelar",
+                disabled=True,
+                key=f"cancelar_disabled_{reserva['idReserva']}"
+            )

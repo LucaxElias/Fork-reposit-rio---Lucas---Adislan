@@ -3,7 +3,7 @@ import streamlit as st
 from app.services.salas import listar_salas, nome_tipo_sala
 from app.services.equipamentos import obter_equipamentos_da_sala
 from app.utils.session import exigir_usuario_selecionado
-from app.utils.helpers import badge_status, tag_neutra, barra_status
+from app.components.cards import card_sala
 
 st.set_page_config(
     page_title="Salas - UNISAPIENS",
@@ -72,65 +72,9 @@ else:
     )
 
     for _, sala in df.iterrows():
-        with st.container(border=True):
-            st.markdown(barra_status(sala["status"]), unsafe_allow_html=True)
+        equipamentos = obter_equipamentos_da_sala(sala["idSala"])
+        tipo = nome_tipo_sala(sala["idTipoSala"])
 
-            col_info, col_status, col_acao = st.columns(
-                [3, 1, 1]
-            )
-
-            with col_info:
-                st.markdown(
-                    f"### {sala['nome']}"
-                )
-
-                st.markdown(
-                    tag_neutra(nome_tipo_sala(sala["idTipoSala"])),
-                    unsafe_allow_html=True,
-                )
-
-                st.write(
-                    f"📍 {sala['predio']} - "
-                    f"{sala['andar']}º andar"
-                )
-
-                st.write(
-                    f"👥 Capacidade: "
-                    f"{sala['capacidade']} pessoas"
-                )
-
-                equipamentos = obter_equipamentos_da_sala(sala["idSala"])
-                if not equipamentos.empty:
-                    tags_html = "".join(
-                        tag_neutra(f"{linha['nome']} ({int(linha['quantidade'])})")
-                        for _, linha in equipamentos.iterrows()
-                    )
-                    st.markdown(tags_html, unsafe_allow_html=True)
-
-                if sala.get("descricao"):
-                    st.caption(
-                        sala["descricao"]
-                    )
-
-            with col_status:
-                st.caption("Status")
-                st.markdown(
-                    badge_status(sala["status"]),
-                    unsafe_allow_html=True,
-                )
-
-            with col_acao:
-                st.write("")
-                st.write("")
-
-                if st.button(
-                    "Ver detalhes",
-                    key=f"ver_{sala['idSala']}"
-                ):
-                    st.session_state[
-                        "sala_selecionada_id"
-                    ] = sala["idSala"]
-
-                    st.switch_page(
-                        "app/pages/3_Detalhes_Sala.py"
-                    )
+        if card_sala(sala, tipo, equipamentos, texto_botao="Ver detalhes"):
+            st.session_state["sala_selecionada_id"] = sala["idSala"]
+            st.switch_page("app/pages/3_Detalhes_Sala.py")

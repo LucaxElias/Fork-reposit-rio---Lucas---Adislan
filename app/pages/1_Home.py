@@ -73,21 +73,22 @@ else:
         st.write("**Próxima reserva**")
 
         with st.container(border=True):
-            col_info, col_status = st.columns([3, 1])
+            col_titulo, col_badge = st.columns([3, 1])
 
-            with col_info:
+            with col_titulo:
                 st.markdown(f"### {nome_sala_proxima}")
-                st.write(
-                    f"📅 {proxima_reserva['data']}  •  "
-                    f"🕐 {proxima_reserva['horaInicio'][:5]} - "
-                    f"{proxima_reserva['horaFim'][:5]}"
-                )
 
-            with col_status:
+            with col_badge:
                 st.markdown(
                     badge_status(proxima_reserva["status"]),
                     unsafe_allow_html=True,
                 )
+
+            st.write(
+                f"📅 {proxima_reserva['data']}  •  "
+                f"🕐 {proxima_reserva['horaInicio'][:5]} - "
+                f"{proxima_reserva['horaFim'][:5]}"
+            )
 
             col_btn1, col_btn2 = st.columns(2)
 

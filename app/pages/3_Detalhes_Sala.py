@@ -55,69 +55,59 @@ st.divider()
 
 st.markdown(barra_status(sala["status"]), unsafe_allow_html=True)
 
-col1, col2 = st.columns([2, 1])
+col_titulo, col_badge = st.columns([3, 1])
 
-with col1:
+with col_titulo:
     st.subheader(sala["nome"])
 
-    st.markdown(
-        tag_neutra(nome_tipo_sala(sala["idTipoSala"])),
-        unsafe_allow_html=True,
-    )
+with col_badge:
+    st.markdown(badge_status(sala["status"]), unsafe_allow_html=True)
 
+st.markdown(
+    tag_neutra(nome_tipo_sala(sala["idTipoSala"])),
+    unsafe_allow_html=True,
+)
+
+col1, col2 = st.columns(2)
+
+with col1:
     st.write(
         f"📍 **Localização:** "
         f"{sala['predio']} - "
         f"{sala['andar']}º andar"
     )
 
+with col2:
     st.write(
         f"👥 **Capacidade:** "
         f"{sala['capacidade']} pessoas"
     )
 
-    equipamentos = obter_equipamentos_da_sala(sala["idSala"])
-    if not equipamentos.empty:
-        st.write("🧰 **Equipamentos:**")
-        tags_html = "".join(
-            tag_neutra(f"{linha['nome']} ({int(linha['quantidade'])})")
-            for _, linha in equipamentos.iterrows()
-        )
-        st.markdown(tags_html, unsafe_allow_html=True)
+equipamentos = obter_equipamentos_da_sala(sala["idSala"])
+if not equipamentos.empty:
+    st.write("🧰 **Equipamentos:**")
+    tags_html = "".join(
+        tag_neutra(f"{linha['nome']} ({int(linha['quantidade'])})")
+        for _, linha in equipamentos.iterrows()
+    )
+    st.markdown(tags_html, unsafe_allow_html=True)
 
-    if sala.get("descricao"):
-        st.write(
-            f"📝 **Descrição:** "
-            f"{sala['descricao']}"
-        )
-
-with col2:
-    st.caption("Status atual")
-    st.markdown(
-        badge_status(sala["status"]),
-        unsafe_allow_html=True,
+if sala.get("descricao"):
+    st.write(
+        f"📝 **Descrição:** "
+        f"{sala['descricao']}"
     )
 
-    if sala["status"] == "Disponivel":
-
-        if st.button(
-            "📅 Reservar esta sala",
-            type="primary"
-        ):
-            st.session_state[
-                "sala_reservar_id"
-            ] = sala_id
-
-            st.switch_page(
-                "app/pages/4_Reservar.py"
-            )
-
-    else:
-        st.button(
-            "📅 Reservar esta sala",
-            disabled=True,
-            help="Sala indisponível para reserva"
-        )
+if sala["status"] == "Disponivel":
+    if st.button("📅 Reservar esta sala", type="primary"):
+        st.session_state["sala_reservar_id"] = sala_id
+        st.switch_page("app/pages/4_Reservar.py")
+else:
+    st.button(
+        "📅 Reservar esta sala",
+        disabled=True,
+        help="Sala indisponível para reserva"
+    )
 
 st.divider()
 
