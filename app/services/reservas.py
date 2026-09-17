@@ -37,7 +37,7 @@ FORMATO_DATA = "%d/%m/%Y"
 FORMATOS_HORA = ("%H:%M:%S", "%H:%M")  # tenta nessa ordem
 
 
-def _parse_hora(valor: str) -> time:
+def parse_hora(valor: str) -> time:
     """Converte string de hora para time, aceitando 'HH:MM' e 'HH:MM:SS'."""
     valor = str(valor).strip()
     for formato in FORMATOS_HORA:
@@ -73,8 +73,8 @@ def _linha_para_dict_tipado(linha: dict) -> dict:
         "sala_id": linha["idSala"],
         "usuario_id": linha["idUser"],
         "data": datetime.strptime(linha["data"], FORMATO_DATA).date(),
-        "hora_inicio": _parse_hora(linha["horaInicio"]),
-        "hora_fim": _parse_hora(linha["horaFim"]),
+        "hora_inicio": parse_hora(linha["horaInicio"]),
+        "hora_fim": parse_hora(linha["horaFim"]),
         "status": linha["status"],
     }
 

@@ -136,6 +136,6 @@ Basta ativar o ambiente virtual e iniciar o Streamlit:
 
 ```cmd
 .venv\Scripts\activate.bat
-streamlit run app\main.py
+streamlit run main.py
 ```
 

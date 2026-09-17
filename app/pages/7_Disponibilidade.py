@@ -2,7 +2,7 @@ import streamlit as st
 from datetime import date, datetime, timedelta
 
 from app.services.salas import buscar_sala_por_id, listar_salas
-from app.services.reservas import listar_reservas_por_sala, _parse_hora
+from app.services.reservas import listar_reservas_por_sala, parse_hora
 from app.services.usuarios import buscar_usuario_por_id
 from app.services.validacao import obter_horario_permitido, horarios_conflitam
 from app.utils.session import exigir_usuario_selecionado
@@ -101,8 +101,8 @@ else:
 
         ocupante = None
         for _, reserva in reservas_do_dia.iterrows():
-            r_inicio = _parse_hora(reserva["horaInicio"])
-            r_fim = _parse_hora(reserva["horaFim"])
+            r_inicio = parse_hora(reserva["horaInicio"])
+            r_fim = parse_hora(reserva["horaFim"])
             if horarios_conflitam(hora_atual, fim_slot, r_inicio, r_fim):
                 ocupante = reserva
                 break
